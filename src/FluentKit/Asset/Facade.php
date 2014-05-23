@@ -2,9 +2,9 @@
 
 namespace FluentKit\Asset;
 
-use Illuminate\Support\Facades\Facade;
+use Illuminate\Support\Facades\Facade as LaravelFacade;
 
-class Asset extends Facade{
+class Facade extends LaravelFacade{
 
 	protected static function getFacadeAccessor() { return 'fluentkit.asset'; }
 
