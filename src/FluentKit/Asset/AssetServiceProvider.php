@@ -61,6 +61,38 @@ class AssetServiceProvider extends ServiceProvider {
 
 		//fluent aliases
 		$loader->alias('Asset', 'FluentKit\Asset\Facade');
+        
+        $app = $this->app;
+        
+        $this->app['events']->listen('header', function() use ($app){
+            foreach( $app['fluentkit.asset']->getStyles() as $asset ){
+                echo $app['html']->element(
+                    'link',
+                    array_merge( array(
+                        'href' => str_replace('{version}', array_get($asset->options, 'version'), $asset->url),
+                        'rel' => 'stylesheet',
+                        'type' => 'text/css'
+                        ), $asset->attributes )
+                ) . "\n";
+            }
+            foreach( $app['fluentkit.asset']->getScripts(null) as $asset ){
+                echo $app['html']->element(
+                    'script',
+                    array_merge( array( 'src' => str_replace('{version}', array_get($asset->options, 'version'), $asset->url) ), $asset->attributes ),
+                    array_get( $asset->options, 'content', '' )
+                ) . "\n";
+            }
+        });
+        
+        $this->app['events']->listen('footer', function() use ($app){
+            foreach( $app['fluentkit.asset']->getScripts('footer') as $asset ){
+                echo $app['html']->element(
+                    'script',
+                    array_merge( array( 'src' => str_replace('{version}', array_get($asset->options, 'version'), $asset->url) ), $asset->attributes ),
+                    array_get( $asset->options, 'content', '' )
+                ) . "\n";
+            }
+        });
 
     }
 
