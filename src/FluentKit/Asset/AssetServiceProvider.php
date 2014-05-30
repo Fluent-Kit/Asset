@@ -39,8 +39,18 @@ class AssetServiceProvider extends ServiceProvider {
             $assetManager->register('bootstrap', function($asset)
             {
                 $asset->js('//netdna.bootstrapcdn.com/bootstrap/{version}/js/bootstrap.min.js', array('version' => '3.1.1'), array('defer' => 'defer'));
-                $asset->requires('jquery');
+                $asset->requires('jquery', 'respond', 'html5shiv');
                 $asset->css('//netdna.bootstrapcdn.com/bootstrap/{version}/css/bootstrap.min.css', array('version' => '3.1.1'));
+            });
+            
+            $assetManager->register('respond', function($asset)
+            {
+                $asset->js('//oss.maxcdn.com/libs/respond.js/{version}/respond.min.js', array('version' => '1.4.2'));
+            });
+            
+            $assetManager->register('html5shiv', function($asset)
+            {
+                $asset->js('//oss.maxcdn.com/libs/html5shiv/{version}/html5shiv.j', array('version' => '3.7.0'));
             });
 
             return $assetManager;
@@ -64,8 +74,8 @@ class AssetServiceProvider extends ServiceProvider {
         
         $app = $this->app;
         
-        $this->app['events']->listen('header', function() use ($app){
-            foreach( $app['fluentkit.asset']->getStyles() as $asset ){
+        $this->app['events']->listen('head', function() use ($app){
+            foreach( $app['fluentkit.asset']->getStyles() as $key => $asset ){
                 echo $app['html']->element(
                     'link',
                     array_merge( array(
